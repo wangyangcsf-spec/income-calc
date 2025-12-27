@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-Hant-TW">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博主財務助手 Pro - OTF 圓體版</title>
+    <title>博主财务助手 Pro - 简体圆体版</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,10 +27,9 @@
     <link rel="apple-touch-icon" href="icon.svg">
 
     <style>
-        /* 1. 核心步驟：加載您上傳的 .otf 字體文件 */
+        /* 2. 加载您上传到 GitHub 的 .otf 字体文件 */
         @font-face {
             font-family: 'MyCustomRounded';
-            /* 修改為 otf 格式路徑與格式聲明 */
             src: url('font.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
@@ -38,8 +37,8 @@
         }
 
         :root {
-            /* 強制優先使用自託管的圓體 */
-            --font-main: 'MyCustomRounded', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            /* 优先级：自托管圆体 > 简体圆体备选 > 系统默认 */
+            --font-main: 'MyCustomRounded', 'PingFang SC', 'Microsoft YaHei', sans-serif;
         }
 
         * {
@@ -47,12 +46,12 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 數字部分優先使用 Inter，中文自動回退到您的圓體 */
+        /* 数字部分优先使用 Inter，确保严谨感 */
         .font-mono, input, .num-font {
             font-family: 'Inter', var(--font-main) !important;
         }
 
-        /* Figma 風格滑塊 */
+        /* Figma 风格滑块 */
         input[type=range] { height: 6px; -webkit-appearance: none; background: #E2E8F0; border-radius: 999px; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -75,16 +74,16 @@
         <div class="mb-10 text-center">
             <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-4 py-1.5 mb-3">
                 <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Figma Design v7.8</span>
+                <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Figma Design v7.9</span>
             </div>
-            <h2 class="text-3xl font-black tracking-tight text-slate-900">收入計算器</h2>
-            <p class="text-slate-500 text-sm font-medium mt-2">OTF 圓體適配 / 實測案例對齊</p>
+            <h2 class="text-3xl font-black tracking-tight text-slate-900">收入计算器</h2>
+            <p class="text-slate-500 text-sm font-medium mt-2">简体圆体适配 / 实测案例对齐</p>
         </div>
 
         <div class="space-y-8">
             <div class="space-y-6">
                 <div class="group">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">商務報價 (Gross Quote)</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">商务报价 (Gross Quote)</label>
                     <div class="relative flex items-center">
                         <span class="absolute left-5 text-slate-400 font-mono text-lg">¥</span>
                         <input type="number" id="qInput" value="10400" class="w-full pl-12 pr-4 py-4 bg-slate-100/80 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:bg-white transition-all outline-none font-mono text-2xl font-bold text-slate-800 shadow-sm">
@@ -93,8 +92,8 @@
 
                 <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-100">
                     <div>
-                        <span class="block text-sm font-bold text-slate-700">本月首筆提現</span>
-                        <span class="block text-[10px] text-slate-400 font-medium tracking-tight">扣除 5000 元年度免稅額度</span>
+                        <span class="block text-sm font-bold text-slate-700">本月首笔提现</span>
+                        <span class="block text-[10px] text-slate-400 font-medium tracking-tight">扣除 5000 元年度免税额度</span>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="thresholdToggle" checked class="sr-only peer">
@@ -104,7 +103,7 @@
 
                 <div class="pt-2">
                     <div class="flex justify-between items-end mb-4">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">PR 返點 (0% - 40%)</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">PR 返点 (0% - 40%)</label>
                         <span id="prValue" class="text-orange-600 font-mono font-bold bg-orange-50/80 border border-orange-100 px-3 py-1 rounded-lg text-sm shadow-sm">0%</span>
                     </div>
                     <div class="relative py-2">
@@ -116,15 +115,15 @@
             <div class="bg-slate-50/80 rounded-[28px] p-1 border border-slate-100 shadow-inner">
                 <div class="bg-white rounded-[24px] p-6 shadow-sm divide-y divide-slate-100">
                     <div class="flex justify-between items-center py-3 first:pt-0">
-                        <span class="text-sm text-slate-500 font-bold">平台服務費 (10%)</span>
+                        <span class="text-sm text-slate-500 font-bold">平台服务费 (10%)</span>
                         <span id="resPlatform" class="font-mono text-slate-700 font-bold">-</span>
                     </div>
                     <div class="flex justify-between items-center py-3">
-                        <span class="text-sm text-slate-500 font-bold">預估分段稅費 (3%)</span>
+                        <span class="text-sm text-slate-500 font-bold">预估分段税费 (3%)</span>
                         <span id="resTax" class="font-mono text-red-500 font-bold">-</span>
                     </div>
                     <div class="flex justify-between items-center py-4 bg-blue-50/30 -mx-6 px-6">
-                        <span class="text-sm text-blue-700 font-black italic">稅後淨餘額 (返點基數)</span>
+                        <span class="text-sm text-blue-700 font-black italic">税后净余额 (返点基数)</span>
                         <span id="resAfterTax" class="font-mono text-blue-800 font-black">¥0.00</span>
                     </div>
                 </div>
@@ -133,13 +132,13 @@
             <div id="finalCard" class="relative overflow-hidden bg-blue-600 rounded-[32px] p-8 text-white shadow-xl shadow-blue-500/30 transition-all duration-500">
                 <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent opacity-50 pointer-events-none"></div>
                 <div class="relative z-10 text-center">
-                    <p class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">最終實收淨利潤 (Profit)</p>
+                    <p class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">最终实收净利润 (Profit)</p>
                     <div class="flex items-baseline justify-center gap-1.5">
                         <span class="text-2xl font-semibold opacity-90">¥</span>
                         <span id="finalNet" class="text-5xl font-black font-mono tracking-tighter">0.00</span>
                     </div>
                     <div id="marginText" class="inline-block mt-4 text-xs font-bold bg-white/25 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 uppercase">
-                        MARGIN: 0%
+                        利润率: 0%
                     </div>
                 </div>
             </div>
@@ -162,41 +161,40 @@
             const prRate = (parseInt(prSlider.value) || 0) / 100;
             prValue.innerText = (prRate * 100).toFixed(0) + '%';
 
-            // 1. 申報基數：以提現金額為準
+            // 1. 提现金额 = 报价 * 90%
             const pFee = Q * 0.10;
             const B = Q - pFee;
 
-            // 2. 應納稅收入：提現金額再扣 20% 成本
+            // 2. 应纳税收入 = 提现金额 * 80% (根据官方 20% 成本扣除规则)
             const taxableIncome = B * 0.8;
 
-            // 3. 扣稅方式：年度累計梯度
-            // 以 10 月提現 1 萬元為例，扣除每月 5000 元額度後，按 3% 繳稅
+            // 3. 计算税费：对齐实测案例 55.31 / 72.42 / 265.18
             const threshold = toggle.checked ? 5000 : 0;
             let tax = 0;
             if (taxableIncome > threshold) {
-                // 對齊實測案例的微小專項抵扣偏移
+                // 3% 阶梯，并对齐实测中约 2.22 元的专项扣除偏移
                 tax = (taxableIncome - threshold) * 0.03 - 2.22;
                 if (tax < 0) tax = 0;
             }
 
-            // 4. 稅後淨額 (基於此基數計算 PR 返點)
+            // 4. 税后净额 (以此为基数计算 PR 返点)
             const afterTaxBase = B - tax;
 
-            // 5. PR 返點金額
+            // 5. PR 返点支出
             const prAmount = afterTaxBase * prRate;
             
-            // 6. 最終利潤
+            // 6. 最终实收
             const finalProfit = afterTaxBase - prAmount;
             const profitMargin = Q > 0 ? (finalProfit / Q * 100).toFixed(1) : 0;
 
-            // UI 渲染
+            // 渲染
             document.getElementById('resPlatform').innerText = `-¥${formatMoney(pFee)}`;
             document.getElementById('resTax').innerText = `-¥${formatMoney(tax)}`;
             document.getElementById('resAfterTax').innerText = `¥${formatMoney(afterTaxBase)}`;
             document.getElementById('finalNet').innerText = formatMoney(finalProfit);
-            document.getElementById('marginText').innerText = `利潤率: ${profitMargin}%`;
+            document.getElementById('marginText').innerText = `利润率: ${profitMargin}%`;
 
-            // 卡片顏色狀態
+            // UI 状态
             const baseClass = 'relative overflow-hidden rounded-[32px] p-8 text-white shadow-xl transition-all duration-500 ';
             if (finalProfit < 0) {
                 finalCard.className = baseClass + 'bg-red-600 shadow-red-500/30';
