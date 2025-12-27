@@ -6,8 +6,8 @@
     <title>博主收入计算器</title>
 
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="icon.svg?v=8.4">
-    <link rel="apple-touch-icon" href="icon.svg?v=8.4">
+    <link rel="icon" type="image/svg+xml" href="icon.svg?v=8.5">
+    <link rel="apple-touch-icon" href="icon.svg?v=8.5">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -41,7 +41,6 @@
         * { font-family: var(--font-main) !important; -webkit-font-smoothing: antialiased; }
         .font-mono, input, .num-font { font-family: 'Inter', var(--font-main) !important; }
         
-        /* 响应式滑块 */
         input[type=range] { height: 6px; -webkit-appearance: none; background: #E2E8F0; border-radius: 999px; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 26px; width: 26px; border-radius: 50%;
@@ -50,109 +49,104 @@
         }
         input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
         
-        /* 满屏且稳定的布局逻辑 */
+        /* 针对 iPhone 17 Pro 灵动岛及满屏优化的核心布局 */
         body { 
-            min-height: 100dvh; 
+            height: 100dvh; 
+            overflow: hidden; 
             display: flex; 
             flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
             background-color: #F8FAFC;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        .safe-wrapper {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.25rem;
-        }
-
-        .app-card {
-            width: 100%;
+        /* 容器锁定高度，强制满屏显示 */
+        .app-container {
+            width: 92%;
             max-width: 440px;
+            height: 94%; 
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            justify-content: space-between; /* 均匀撑开空间 */
         }
 
         #finalNetInput:focus { outline: none; background: rgba(255,255,255,0.1); border-radius: 12px; }
     </style>
 </head>
 
-<body>
-    <div class="safe-wrapper">
-        <div class="app-card bg-white rounded-[40px] shadow-figma p-8 border border-slate-50">
+<body class="p-4">
+    <div class="app-container bg-white rounded-[40px] shadow-figma p-8 border border-slate-50">
+        
+        <div class="text-center">
+            <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1 mb-2">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">PWA Active v8.5</span>
+            </div>
+            <h2 class="text-3xl font-black tracking-tight text-slate-900">收入计算器</h2>
+        </div>
+
+        <div class="flex-grow flex flex-col justify-between py-6">
             
-            <div class="text-center">
-                <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1 mb-4">
-                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">PWA Active v8.4</span>
+            <div class="w-full">
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 ml-1">商务报价 (GROSS QUOTE)</label>
+                <div class="relative flex items-center">
+                    <span class="absolute left-5 text-slate-400 font-mono text-xl">¥</span>
+                    <input type="number" id="qInput" placeholder="输入报价" class="w-full pl-12 pr-6 py-4 bg-slate-100/80 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:bg-white transition-all outline-none font-mono text-2xl font-bold text-slate-800">
                 </div>
-                <h2 class="text-3xl font-black tracking-tight text-slate-900">收入计算器</h2>
             </div>
 
-            <div class="space-y-6">
-                
+            <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 ml-1">商务报价 (GROSS QUOTE)</label>
-                    <div class="relative flex items-center">
-                        <span class="absolute left-5 text-slate-400 font-mono text-xl">¥</span>
-                        <input type="number" id="qInput" placeholder="输入报价" class="w-full pl-12 pr-6 py-4 bg-slate-100/80 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:bg-white transition-all outline-none font-mono text-2xl font-bold text-slate-800">
+                    <span class="block text-sm font-bold text-slate-700">本月首笔提现</span>
+                    <span class="block text-[10px] text-slate-400 font-medium tracking-tight">扣除 5000 元年度免税额度</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="thresholdToggle" checked class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+
+            <div class="w-full">
+                <div class="flex justify-between items-end mb-4">
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">PR返点 (0% - 40%)</label>
+                    <span id="prValue" class="text-orange-600 font-mono font-bold bg-orange-50 px-3 py-1 rounded-xl text-sm border border-orange-100">0%</span>
+                </div>
+                <div class="relative py-2">
+                    <input type="range" id="prSlider" min="0" max="40" value="0" class="w-full cursor-pointer">
+                </div>
+            </div>
+
+            <div class="bg-slate-50/80 rounded-[24px] p-1 border border-slate-100">
+                <div class="bg-white rounded-[22px] p-5 shadow-sm divide-y divide-slate-100">
+                    <div class="flex justify-between items-center py-2.5 first:pt-0">
+                        <span class="text-xs text-slate-400 font-bold uppercase tracking-widest">平台费 (10%)</span>
+                        <span id="resPlatform" class="font-mono text-slate-600 font-bold text-sm">¥ 0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2.5">
+                        <span class="text-xs text-slate-400 font-bold uppercase tracking-widest">分段税费 (3%)</span>
+                        <span id="resTax" class="font-mono text-red-500 font-bold text-sm">¥ 0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 bg-blue-50/40 -mx-5 px-5 mt-2">
+                        <span class="text-xs text-blue-700 font-black tracking-wide">税后余额 (基数)</span>
+                        <span id="resAfterTax" class="font-mono text-blue-800 font-black text-sm">¥ 0.00</span>
                     </div>
                 </div>
+            </div>
 
-                <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <div>
-                        <span class="block text-sm font-bold text-slate-700">本月首笔提现</span>
-                        <span class="block text-[10px] text-slate-400 font-medium tracking-tight">扣除 5000 元年度免税额度</span>
+            <div id="finalCard" class="relative overflow-hidden bg-blue-600 rounded-[32px] p-7 text-white shadow-xl shadow-blue-500/30 transition-all duration-500">
+                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent opacity-50 pointer-events-none"></div>
+                <div class="relative z-10 text-center">
+                    <p class="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-2 flex justify-center items-center gap-2">
+                        最终实收净利润 (NET PROFIT) <span class="text-[9px] bg-white/20 px-1.5 rounded">可反推</span>
+                    </p>
+                    <div class="flex items-baseline justify-center gap-1.5">
+                        <span class="text-2xl font-semibold opacity-90">¥</span>
+                        <input type="number" id="finalNetInput" step="0.01" class="bg-transparent border-0 text-4xl font-black font-mono tracking-tighter w-full text-center focus:outline-none" placeholder="0.00">
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="thresholdToggle" checked class="sr-only peer">
-                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-end mb-4">
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">PR返点 (0% - 40%)</label>
-                        <span id="prValue" class="text-orange-600 font-mono font-bold bg-orange-50 px-3 py-1 rounded-xl text-sm border border-orange-100">0%</span>
-                    </div>
-                    <div class="relative py-2">
-                        <input type="range" id="prSlider" min="0" max="40" value="0" class="w-full cursor-pointer">
-                    </div>
-                </div>
-
-                <div class="bg-slate-50/80 rounded-[24px] p-1 border border-slate-100">
-                    <div class="bg-white rounded-[22px] p-5 shadow-sm divide-y divide-slate-100">
-                        <div class="flex justify-between items-center py-2.5 first:pt-0">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-widest">平台费 (10%)</span>
-                            <span id="resPlatform" class="font-mono text-slate-600 font-bold text-sm">¥ 0.00</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2.5">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-widest">分段税费 (3%)</span>
-                            <span id="resTax" class="font-mono text-red-500 font-bold text-sm">¥ 0.00</span>
-                        </div>
-                        <div class="flex justify-between items-center py-3 bg-blue-50/40 -mx-5 px-5 mt-2">
-                            <span class="text-xs text-blue-700 font-black tracking-wide">税后余额 (基数)</span>
-                            <span id="resAfterTax" class="font-mono text-blue-800 font-black text-sm">¥ 0.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="finalCard" class="relative overflow-hidden bg-blue-600 rounded-[32px] p-7 text-white shadow-xl shadow-blue-500/30 transition-all duration-500">
-                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent opacity-50 pointer-events-none"></div>
-                    <div class="relative z-10 text-center">
-                        <p class="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-2 flex justify-center items-center gap-2">
-                            最终实收净利润 (NET PROFIT) <span class="text-[9px] bg-white/20 px-1.5 rounded">可反推</span>
-                        </p>
-                        <div class="flex items-baseline justify-center gap-1.5">
-                            <span class="text-2xl font-semibold opacity-90">¥</span>
-                            <input type="number" id="finalNetInput" step="0.01" class="bg-transparent border-0 text-4xl font-black font-mono tracking-tighter w-full text-center focus:outline-none" placeholder="0.00">
-                        </div>
-                        <div id="marginText" class="inline-block mt-4 text-[10px] font-bold bg-white/25 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 uppercase">
-                            利润率: 0%
-                        </div>
+                    <div id="marginText" class="inline-block mt-4 text-[10px] font-bold bg-white/25 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 uppercase">
+                        利润率: 0%
                     </div>
                 </div>
             </div>
