@@ -6,8 +6,8 @@
     <title>博主收入计算器</title>
 
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="icon.svg?v=3.0">
-    <link rel="apple-touch-icon" href="icon.svg?v=3.0">
+    <link rel="icon" type="image/svg+xml" href="icon.svg?v=3.1">
+    <link rel="apple-touch-icon" href="icon.svg?v=3.1">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -33,6 +33,7 @@
     </script>
 
     <style>
+        /* 3. 自托管 OTF 字体加载 */
         @font-face {
             font-family: 'MyCustomRounded';
             src: url('font.otf') format('opentype');
@@ -42,6 +43,7 @@
         * { font-family: var(--font-main) !important; -webkit-font-smoothing: antialiased; }
         .font-mono, input, .num-font { font-family: 'Inter', var(--font-main) !important; }
         
+        /* Figma 风格滑块自定义 */
         input[type=range] { height: 6px; -webkit-appearance: none; background: #E2E8F0; border-radius: 999px; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
@@ -54,13 +56,13 @@
 
 <body class="bg-[#F8FAFC] p-4 md:p-8 min-h-screen flex items-center justify-center text-slate-900">
     <div class="max-w-[460px] w-full bg-white rounded-[36px] shadow-figma p-8 md:p-10 border border-slate-50/50 transition-all duration-300 hover:shadow-figma-hover">
+        
         <div class="mb-10 text-center">
             <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-4 py-1.5 mb-3">
                 <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                 <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">PWA Mode Active</span>
             </div>
             <h2 class="text-3xl font-black tracking-tight text-slate-900">收入计算器</h2>
-            <p class="text-slate-500 text-sm font-medium mt-2">简体圆体适配 / 实测案例对齐</p>
         </div>
 
         <div class="space-y-8">
@@ -106,7 +108,7 @@
                         <span id="resTax" class="font-mono text-red-500 font-bold">-</span>
                     </div>
                     <div class="flex justify-between items-center py-4 bg-blue-50/30 -mx-6 px-6">
-                        <span class="text-sm text-blue-700 font-black italic">税后净余额 (返点基数)</span>
+                        <span class="text-sm text-blue-700 font-black">税后净余额 (返点基数)</span>
                         <span id="resAfterTax" class="font-mono text-blue-800 font-black">¥0.00</span>
                     </div>
                 </div>
