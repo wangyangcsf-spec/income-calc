@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博主财务助手 Pro - 简体圆体版</title>
+    <title>博主财务助手 Pro - 简体全能版</title>
+
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#E8DECA">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -23,11 +28,8 @@
         }
     </script>
 
-    <link rel="icon" type="image/svg+xml" href="icon.svg">
-    <link rel="apple-touch-icon" href="icon.svg">
-
     <style>
-        /* 2. 加载您上传到 GitHub 的 .otf 字体文件 */
+        /* 3. 自托管 OTF 字体加载 */
         @font-face {
             font-family: 'MyCustomRounded';
             src: url('font.otf') format('opentype');
@@ -37,21 +39,21 @@
         }
 
         :root {
-            /* 优先级：自托管圆体 > 简体圆体备选 > 系统默认 */
             --font-main: 'MyCustomRounded', 'PingFang SC', 'Microsoft YaHei', sans-serif;
         }
 
+        /* 全局强制简体圆体 */
         * {
             font-family: var(--font-main) !important;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 数字部分优先使用 Inter，确保严谨感 */
+        /* 数字部分使用 Inter 保持严谨感 */
         .font-mono, input, .num-font {
             font-family: 'Inter', var(--font-main) !important;
         }
 
-        /* Figma 风格滑块 */
+        /* Figma 风格滑块自定义 */
         input[type=range] { height: 6px; -webkit-appearance: none; background: #E2E8F0; border-radius: 999px; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -165,14 +167,13 @@
             const pFee = Q * 0.10;
             const B = Q - pFee;
 
-            // 2. 应纳税收入 = 提现金额 * 80% (根据官方 20% 成本扣除规则)
+            // 2. 应纳税收入 = 提现金额 * 80% (根据官方规则 20% 成本扣除)
             const taxableIncome = B * 0.8;
 
-            // 3. 计算税费：对齐实测案例 55.31 / 72.42 / 265.18
+            // 3. 计算税费：基于 3% 阶梯，并对齐实测中约 2.22 元的专项扣除偏移
             const threshold = toggle.checked ? 5000 : 0;
             let tax = 0;
             if (taxableIncome > threshold) {
-                // 3% 阶梯，并对齐实测中约 2.22 元的专项扣除偏移
                 tax = (taxableIncome - threshold) * 0.03 - 2.22;
                 if (tax < 0) tax = 0;
             }
@@ -194,7 +195,7 @@
             document.getElementById('finalNet').innerText = formatMoney(finalProfit);
             document.getElementById('marginText').innerText = `利润率: ${profitMargin}%`;
 
-            // UI 状态
+            // UI 颜色状态
             const baseClass = 'relative overflow-hidden rounded-[32px] p-8 text-white shadow-xl transition-all duration-500 ';
             if (finalProfit < 0) {
                 finalCard.className = baseClass + 'bg-red-600 shadow-red-500/30';
