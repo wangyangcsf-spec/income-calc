@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>博主财务助手 Pro - Figma Style</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    
     <script>
         tailwind.config = {
             theme: {
@@ -24,8 +29,8 @@
             }
         }
     </script>
+
     <style>
-        /* Figma 风格的滑动条控件重绘 */
         input[type=range] {
             height: 6px;
         }
@@ -37,14 +42,13 @@
             background: #FFFFFF;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border: 6px solid #F97316; /* Orange border as accent */
+            border: 6px solid #F97316; 
             transition: all 0.2s ease;
         }
         input[type=range]::-webkit-slider-thumb:hover {
              box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
              transform: scale(1.05);
         }
-        /* 隐藏数字输入框的箭头 */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -52,6 +56,7 @@
         }
     </style>
 </head>
+
 <body class="bg-[#F8FAFC] p-4 md:p-8 min-h-screen flex items-center justify-center font-sans antialiased text-slate-900">
     
     <div class="max-w-[460px] w-full bg-white rounded-[36px] shadow-figma p-8 md:p-10 border border-slate-50/50 transition-all duration-300 hover:shadow-figma-hover">
@@ -117,13 +122,11 @@
                         <span class="text-sm text-slate-700 font-bold">税后预计到账</span>
                         <span id="resAfterTax" class="font-mono text-slate-900 font-black text-lg">￥0.00</span>
                     </div>
-                   
                 </div>
             </div>
 
             <div id="finalCard" class="relative overflow-hidden bg-blue-600 rounded-[32px] p-8 text-white shadow-xl shadow-blue-500/30 transition-all duration-500 hover:scale-[1.01]">
                 <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent opacity-50 pointer-events-none"></div>
-                
                 <div class="relative z-10 text-center">
                     <p class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">最终实收净利润 (Net Profit)</p>
                     <div class="flex items-baseline justify-center gap-1.5">
@@ -131,7 +134,7 @@
                         <span id="finalNet" class="text-5xl font-black font-mono tracking-tighter">0.00</span>
                     </div>
                     <div id="marginText" class="inline-block mt-4 text-xs font-bold bg-white/25 backdrop-blur-md px-4 py-1.5 rounded-full shadow-sm border border-white/20">
-                        利润率: 0%
+                        实收利润率: 0%
                     </div>
                 </div>
             </div>
@@ -139,7 +142,6 @@
     </div>
 
     <script>
-        // 逻辑代码保持不变，完美复用
         const qInput = document.getElementById('qInput');
         const prSlider = document.getElementById('prSlider');
         const prValue = document.getElementById('prValue');
@@ -155,9 +157,11 @@
             
             prValue.innerText = (prRate * 100) + '%';
 
+            // 1. 扣除 10% 平台服务费
             const pFee = Q * 0.10;
             const B = Q - pFee;
 
+            // 2. 分段计税逻辑
             let tax = 0;
             if (B > 8000) {
                 tax = (B - 8000) * 0.08333333 + 2;
@@ -170,6 +174,7 @@
             const finalProfit = afterTax - prAmount;
             const profitMargin = Q > 0 ? (finalProfit / Q * 100).toFixed(1) : 0;
 
+            // 3. UI 渲染
             document.getElementById('resPlatform').innerText = `-￥${formatMoney(pFee)}`;
             document.getElementById('resTax').innerText = `-￥${formatMoney(tax)}`;
             document.getElementById('resAfterTax').innerText = `￥${formatMoney(afterTax)}`;
@@ -177,13 +182,14 @@
             document.getElementById('finalNet').innerText = formatMoney(finalProfit);
             document.getElementById('marginText').innerText = `实收利润率: ${profitMargin}%`;
 
-            // 颜色逻辑更新：使用更现代的色值和阴影
+            // 4. 状态颜色切换
+            const baseClass = 'relative overflow-hidden rounded-[32px] p-8 text-white shadow-xl transition-all duration-500 hover:scale-[1.01] ';
             if (finalProfit < 0) {
-                finalCard.className = 'relative overflow-hidden bg-red-600 rounded-[32px] p-8 text-white shadow-xl shadow-red-500/30 transition-all duration-500 hover:scale-[1.01]';
+                finalCard.className = baseClass + 'bg-red-600 shadow-red-500/30';
             } else if (profitMargin < 30) {
-                finalCard.className = 'relative overflow-hidden bg-orange-500 rounded-[32px] p-8 text-white shadow-xl shadow-orange-500/30 transition-all duration-500 hover:scale-[1.01]';
+                finalCard.className = baseClass + 'bg-orange-500 shadow-orange-500/30';
             } else {
-                finalCard.className = 'relative overflow-hidden bg-blue-600 rounded-[32px] p-8 text-white shadow-xl shadow-blue-500/30 transition-all duration-500 hover:scale-[1.01]';
+                finalCard.className = baseClass + 'bg-blue-600 shadow-blue-500/30';
             }
         }
 
