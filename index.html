@@ -6,8 +6,8 @@
     <title>博主收入计算器</title>
 
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="icon.svg?v=5.0">
-    <link rel="apple-touch-icon" href="icon.svg?v=5.0">
+    <link rel="icon" type="image/svg+xml" href="icon.svg?v=6.0">
+    <link rel="apple-touch-icon" href="icon.svg?v=6.0">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -24,8 +24,7 @@
             theme: {
                 extend: {
                     boxShadow: {
-                        'figma': '0 15px 40px -10px rgba(0, 0, 0, 0.04)',
-                        'figma-hover': '0 20px 50px -10px rgba(0, 0, 0, 0.06)',
+                        'figma': '0 15px 35px -10px rgba(0, 0, 0, 0.05)',
                     }
                 }
             }
@@ -33,7 +32,6 @@
     </script>
 
     <style>
-        /* 3. OTF 字体加载 */
         @font-face {
             font-family: 'MyCustomRounded';
             src: url('font.otf') format('opentype');
@@ -43,93 +41,89 @@
         * { font-family: var(--font-main) !important; -webkit-font-smoothing: antialiased; }
         .font-mono, input, .num-font { font-family: 'Inter', var(--font-main) !important; }
         
-        /* 紧凑型滑块 */
-        input[type=range] { height: 5px; -webkit-appearance: none; background: #E2E8F0; border-radius: 999px; }
+        input[type=range] { height: 4px; -webkit-appearance: none; background: #E2E8F0; border-radius: 999px; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
-            background: #FFFFFF; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border: 5px solid #F97316; transition: all 0.2s ease;
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+            background: #FFFFFF; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            border: 5px solid #F97316;
         }
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
         
-        /* 适配 100vh 以内全显 */
-        body { height: 100dvh; overflow: hidden; }
+        /* 极致一屏：高度自适应 */
+        body { height: 100dvh; overflow: hidden; display: flex; align-items: center; justify-content: center; background-color: #F8FAFC; }
         #finalNetInput:focus { outline: none; background: rgba(255,255,255,0.1); border-radius: 8px; }
     </style>
 </head>
 
-<body class="bg-[#F8FAFC] flex items-center justify-center p-3 text-slate-900">
-    <div class="max-w-[420px] w-full bg-white rounded-[32px] shadow-figma p-6 border border-slate-50/50 transition-all duration-300">
+<body class="p-4">
+    <div class="max-w-[400px] w-full bg-white rounded-[32px] shadow-figma p-5 border border-slate-50">
         
-        <div class="mb-5 text-center">
-            <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1 mb-2">
+        <div class="mb-4 text-center">
+            <div class="inline-flex items-center gap-1.5 bg-slate-100 rounded-full px-2.5 py-0.5 mb-2">
                 <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-                <span class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">PWA Active</span>
+                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">PWA Active v8.0</span>
             </div>
             <h2 class="text-2xl font-black tracking-tight text-slate-900">收入计算器</h2>
         </div>
 
-        <div class="space-y-5">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">商务报价 (Gross Quote)</label>
-                    <div class="relative flex items-center">
-                        <span class="absolute left-4 text-slate-400 font-mono text-lg">¥</span>
-                        <input type="number" id="qInput" placeholder="输入报价" class="w-full pl-10 pr-4 py-3 bg-slate-100/80 border-0 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:bg-white transition-all outline-none font-mono text-xl font-bold text-slate-800 shadow-sm">
-                    </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">商务报价 (Gross Quote)</label>
+                <div class="relative flex items-center">
+                    <span class="absolute left-4 text-slate-400 font-mono text-lg">¥</span>
+                    <input type="number" id="qInput" placeholder="输入报价" class="w-full pl-10 pr-4 py-2.5 bg-slate-100/80 border-0 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:bg-white transition-all outline-none font-mono text-xl font-bold text-slate-800">
                 </div>
+            </div>
 
-                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <div>
-                        <span class="block text-xs font-bold text-slate-700">本月首笔提现</span>
-                        <span class="block text-[9px] text-slate-400 font-medium">扣除 5000 元免税额度</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="thresholdToggle" checked class="sr-only peer">
-                        <div class="w-10 h-5.5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4.5 after:w-4.5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
-                </div>
-
+            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                 <div>
-                    <div class="flex justify-between items-end mb-3">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">PR 返点 (0% - 40%)</label>
-                        <span id="prValue" class="text-orange-600 font-mono font-bold bg-orange-50 px-2 py-0.5 rounded-lg text-xs border border-orange-100">0%</span>
+                    <span class="block text-xs font-bold text-slate-700">本月首笔提现</span>
+                    <span class="block text-[9px] text-slate-400 font-medium">扣除 5000 元免税额度</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="thresholdToggle" checked class="sr-only peer">
+                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-end mb-2">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">PR 返点 (0% - 40%)</label>
+                    <span id="prValue" class="text-orange-600 font-mono font-bold bg-orange-50 px-2 py-0.5 rounded-lg text-xs border border-orange-100">0%</span>
+                </div>
+                <div class="relative py-1">
+                    <input type="range" id="prSlider" min="0" max="40" value="0" class="w-full cursor-pointer">
+                </div>
+            </div>
+
+            <div class="bg-slate-50/80 rounded-[20px] p-0.5 border border-slate-100">
+                <div class="bg-white rounded-[18px] p-3 shadow-sm divide-y divide-slate-100">
+                    <div class="flex justify-between items-center py-1.5 first:pt-0">
+                        <span class="text-[11px] text-slate-400 font-bold">平台费 (10%)</span>
+                        <span id="resPlatform" class="font-mono text-slate-600 font-bold text-[11px]">¥ 0.00</span>
                     </div>
-                    <div class="relative py-1">
-                        <input type="range" id="prSlider" min="0" max="40" value="0" class="w-full cursor-pointer">
+                    <div class="flex justify-between items-center py-1.5">
+                        <span class="text-[11px] text-slate-400 font-bold">分段税费 (3%)</span>
+                        <span id="resTax" class="font-mono text-red-500 font-bold text-[11px]">¥ 0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 bg-blue-50/40 -mx-3 px-3 mt-1">
+                        <span class="text-[11px] text-blue-700 font-black">税后余额 (基数)</span>
+                        <span id="resAfterTax" class="font-mono text-blue-800 font-black text-[11px]">¥ 0.00</span>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-slate-50/80 rounded-[20px] p-1 border border-slate-100">
-                <div class="bg-white rounded-[18px] p-4 shadow-sm divide-y divide-slate-100">
-                    <div class="flex justify-between items-center py-2 first:pt-0">
-                        <span class="text-xs text-slate-400 font-bold">平台费 (10%)</span>
-                        <span id="resPlatform" class="font-mono text-slate-700 font-bold text-xs">¥ 0.00</span>
-                    </div>
-                    <div class="flex justify-between items-center py-2">
-                        <span class="text-xs text-slate-400 font-bold">分段税费 (3%)</span>
-                        <span id="resTax" class="font-mono text-red-500 font-bold text-xs">¥ 0.00</span>
-                    </div>
-                    <div class="flex justify-between items-center py-2.5 bg-blue-50/30 -mx-4 px-4 mt-1">
-                        <span class="text-xs text-blue-700 font-black">税后余额 (基数)</span>
-                        <span id="resAfterTax" class="font-mono text-blue-800 font-black text-xs">¥ 0.00</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="finalCard" class="relative overflow-hidden bg-blue-600 rounded-[24px] p-6 text-white shadow-lg shadow-blue-500/20 transition-all duration-500">
+            <div id="finalCard" class="relative overflow-hidden bg-blue-600 rounded-[24px] p-5 text-white shadow-lg shadow-blue-500/20 transition-all duration-500">
                 <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent opacity-50 pointer-events-none"></div>
                 <div class="relative z-10 text-center">
-                    <p class="text-[9px] font-bold uppercase tracking-widest opacity-70 mb-1">
-                        最终实收净利润 (Net Profit)
+                    <p class="text-[9px] font-bold uppercase tracking-widest opacity-70 mb-1 flex justify-center items-center gap-1.5">
+                        最终实收净利润 (Net Profit) <span class="text-[8px] bg-white/20 px-1 rounded">可反推</span>
                     </p>
                     <div class="flex items-baseline justify-center gap-1">
-                        <span class="text-xl font-semibold opacity-90">¥</span>
+                        <span class="text-lg font-semibold opacity-90">¥</span>
                         <input type="number" id="finalNetInput" step="0.01" class="bg-transparent border-0 text-4xl font-black font-mono tracking-tighter w-full text-center focus:outline-none" placeholder="0.00">
                     </div>
-                    <div id="marginText" class="inline-block mt-3 text-[9px] font-bold bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 uppercase">
+                    <div id="marginText" class="inline-block mt-2.5 text-[9px] font-bold bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 uppercase">
                         利润率: 0%
                     </div>
                 </div>
@@ -140,33 +134,25 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW Active')).catch(err => console.log('SW Error'));
+                navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW Registered'));
             });
         }
 
-        const qInput = document.getElementById('qInput');
-        const prSlider = document.getElementById('prSlider');
-        const prValue = document.getElementById('prValue');
-        const toggle = document.getElementById('thresholdToggle');
-        const finalCard = document.getElementById('finalCard');
-        const finalNetInput = document.getElementById('finalNetInput');
+        const qInput = document.getElementById('qInput'), prSlider = document.getElementById('prSlider');
+        const prValue = document.getElementById('prValue'), toggle = document.getElementById('thresholdToggle');
+        const finalCard = document.getElementById('finalCard'), finalNetInput = document.getElementById('finalNetInput');
 
-        // 状态机记录器：'quote' 表示最后操作的是报价，'net' 表示最后操作的是到手金额
-        let lastActiveMode = 'quote';
+        let lastActiveMode = 'quote'; // 状态记录器
 
         function formatMoney(num) { return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
-        // 正向计算
         function updateForward() {
             const Q = parseFloat(qInput.value) || 0;
             const prRate = (parseInt(prSlider.value) || 0) / 100;
             prValue.innerText = (prRate * 100).toFixed(0) + '%';
-
-            const pFee = Q * 0.10;
-            const B = Q - pFee;
-            const taxableIncome = B * 0.8;
-            const threshold = toggle.checked ? 5000 : 0;
             
+            const pFee = Q * 0.10, B = Q - pFee, taxableIncome = B * 0.8;
+            const threshold = toggle.checked ? 5000 : 0;
             let tax = taxableIncome > threshold ? (taxableIncome - threshold) * 0.03 - 2.22 : 0;
             if (tax < 0) tax = 0;
 
@@ -177,7 +163,6 @@
             renderUI(Q, pFee, tax, afterTaxBase, finalProfit);
         }
 
-        // 逆向反推
         function updateReverse() {
             const P = parseFloat(finalNetInput.value) || 0;
             const prRate = (parseInt(prSlider.value) || 0) / 100;
@@ -188,9 +173,8 @@
             const targetAfterTaxBase = P / k;
 
             let B;
-            const B_low = targetAfterTaxBase;
-            if (B_low * 0.8 <= threshold) {
-                B = B_low;
+            if (targetAfterTaxBase * 0.8 <= threshold) {
+                B = targetAfterTaxBase;
             } else {
                 B = (targetAfterTaxBase - 0.03 * threshold - 2.22) / 0.976;
             }
@@ -198,8 +182,7 @@
             const Q = B / 0.9;
             qInput.value = Q > 0 ? Q.toFixed(2) : "";
 
-            const pFee = Q * 0.1;
-            const actualB = Q - pFee;
+            const pFee = Q * 0.1, actualB = Q - pFee;
             const tax = actualB * 0.8 > threshold ? (actualB * 0.8 - threshold) * 0.03 - 2.22 : 0;
             renderUI(Q, pFee, tax, targetAfterTaxBase, P);
         }
@@ -211,22 +194,14 @@
             document.getElementById('resAfterTax').innerText = `¥ ${formatMoney(afterTaxBase)}`;
             document.getElementById('marginText').innerText = `利润率: ${profitMargin}%`;
 
-            const baseClass = 'relative overflow-hidden rounded-[24px] p-6 text-white shadow-lg transition-all duration-500 ';
+            const baseClass = 'relative overflow-hidden rounded-[24px] p-5 text-white shadow-lg transition-all duration-500 ';
             finalCard.className = baseClass + (finalProfit < 0 ? 'bg-red-600 shadow-red-500/20' : (profitMargin < 30 ? 'bg-orange-500 shadow-orange-500/20' : 'bg-blue-600 shadow-blue-500/20'));
         }
 
-        // 交互逻辑绑定
-        qInput.addEventListener('input', () => {
-            lastActiveMode = 'quote';
-            updateForward();
-        });
-
-        finalNetInput.addEventListener('input', () => {
-            lastActiveMode = 'net';
-            updateReverse();
-        });
-
-        // 核心：滑动滑块时，检查当前处于哪种模式
+        qInput.addEventListener('input', () => { lastActiveMode = 'quote'; updateForward(); });
+        finalNetInput.addEventListener('input', () => { lastActiveMode = 'net'; updateReverse(); });
+        
+        // 当滑块或开关变动时，判断锁定哪个数值
         [prSlider, toggle].forEach(el => el.addEventListener('input', () => {
             if (lastActiveMode === 'net') {
                 updateReverse();
