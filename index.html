@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博主财务助手 Pro - Figma Style</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                },
+                extend: {
+                    boxShadow: {
+                        'figma': '0 20px 60px -15px rgba(0, 0, 0, 0.05), 0 10px 20px -5px rgba(0, 0, 0, 0.02)',
+                        'figma-hover': '0 25px 70px -15px rgba(0, 0, 0, 0.08), 0 15px 25px -5px rgba(0, 0, 0, 0.04)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Figma 风格的滑动条控件重绘 */
+        input[type=range] {
+            height: 6px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 6px solid #F97316; /* Orange border as accent */
+            transition: all 0.2s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+             box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+             transform: scale(1.05);
+        }
+        /* 隐藏数字输入框的箭头 */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] p-4 md:p-8 min-h-screen flex items-center justify-center font-sans antialiased text-slate-900">
+    
+    <div class="max-w-[460px] w-full bg-white rounded-[36px] shadow-figma p-8 md:p-10 border border-slate-50/50 transition-all duration-300 hover:shadow-figma-hover">
+        
+        <div class="mb-10 text-center">
+            <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-4 py-1.5 mb-3">
+                <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Figma Design Style</span>
+            </div>
+            <h2 class="text-3xl font-black tracking-tight text-slate-900">收入计算器</h2>
+            <p class="text-slate-500 text-sm font-medium mt-2">Pro v4.0 / 阶梯税率模型</p>
+        </div>
+
+        <div class="space-y-8">
+            <div class="space-y-6">
+                <div class="group">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">商务报价 (Gross Quote)</label>
+                    <div class="relative flex items-center">
+                        <span class="absolute left-5 text-slate-400 font-mono text-lg">￥</span>
+                        <input type="number" id="qInput" value="12400" class="w-full pl-12 pr-4 py-4 bg-slate-100/80 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:bg-white transition-all outline-none font-mono text-2xl font-bold text-slate-800 shadow-sm placeholder-slate-300">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <div class="flex justify-between items-end mb-4">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">PR 返点比例 (Rebate)</label>
+                        <span id="prValue" class="text-orange-600 font-mono font-bold bg-orange-50/80 border border-orange-100 px-3 py-1 rounded-lg text-sm shadow-sm">0%</span>
+                    </div>
+                    <div class="relative py-2">
+                        <input type="range" id="prSlider" min="0" max="50" value="0" class="w-full bg-slate-200 rounded-full appearance-none cursor-pointer outline-none">
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-3 font-bold uppercase px-1">
+                            <span>0%</span>
+                            <span class="hidden md:block">12.5%</span>
+                            <span>25%</span>
+                            <span class="hidden md:block">37.5%</span>
+                            <span>50%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-50/80 rounded-[28px] p-1 border border-slate-100 shadow-inner">
+                <div class="bg-white rounded-[24px] p-6 shadow-sm divide-y divide-slate-100">
+                    <div class="flex justify-between items-center py-3 first:pt-0">
+                        <span class="text-sm text-slate-500 font-semibold">平台服务费 <span class="text-slate-400 font-normal">(10%)</span></span>
+                        <span id="resPlatform" class="font-mono text-slate-700 font-bold">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3">
+                        <div class="group/tooltip relative flex items-center">
+                            <span class="text-sm text-slate-500 font-semibold border-b border-dotted border-slate-300 cursor-help">预估分段税费</span>
+                            <div class="invisible opacity-0 group-hover/tooltip:visible group-hover/tooltip:opacity-100 transition-all duration-200 absolute bottom-8 left-0 bg-slate-800 text-white text-[11px] font-medium py-2 px-3 rounded-lg w-48 shadow-lg z-10 pointer-events-none">
+                                算法：(平台后金额 - 8000) × 8.33% + 2元基础费
+                                <svg class="absolute text-slate-800 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                            </div>
+                        </div>
+                        <span id="resTax" class="font-mono text-slate-700 font-bold">-</span>
+                    </div>
+                     <div class="flex justify-between items-center py-3">
+                        <span class="text-sm text-orange-500 font-semibold">PR 返点支出</span>
+                        <span id="resPR" class="font-mono text-orange-600 font-bold">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-4 last:pb-0">
+                        <span class="text-sm text-slate-700 font-bold">税后预计到账</span>
+                        <span id="resAfterTax" class="font-mono text-slate-900 font-black text-lg">￥0.00</span>
+                    </div>
+                   
+                </div>
+            </div>
+
+            <div id="finalCard" class="relative overflow-hidden bg-blue-600 rounded-[32px] p-8 text-white shadow-xl shadow-blue-500/30 transition-all duration-500 hover:scale-[1.01]">
+                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent opacity-50 pointer-events-none"></div>
+                
+                <div class="relative z-10 text-center">
+                    <p class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">最终实收净利润 (Net Profit)</p>
+                    <div class="flex items-baseline justify-center gap-1.5">
+                        <span class="text-2xl font-semibold opacity-90">￥</span>
+                        <span id="finalNet" class="text-5xl font-black font-mono tracking-tighter">0.00</span>
+                    </div>
+                    <div id="marginText" class="inline-block mt-4 text-xs font-bold bg-white/25 backdrop-blur-md px-4 py-1.5 rounded-full shadow-sm border border-white/20">
+                        利润率: 0%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 逻辑代码保持不变，完美复用
+        const qInput = document.getElementById('qInput');
+        const prSlider = document.getElementById('prSlider');
+        const prValue = document.getElementById('prValue');
+        const finalCard = document.getElementById('finalCard');
+
+        function formatMoney(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function update() {
+            const Q = parseFloat(qInput.value) || 0;
+            const prRate = (parseInt(prSlider.value) || 0) / 100;
+            
+            prValue.innerText = (prRate * 100) + '%';
+
+            const pFee = Q * 0.10;
+            const B = Q - pFee;
+
+            let tax = 0;
+            if (B > 8000) {
+                tax = (B - 8000) * 0.08333333 + 2;
+            } else if (B > 0) {
+                tax = 2;
+            }
+
+            const afterTax = B - tax;
+            const prAmount = Q * prRate;
+            const finalProfit = afterTax - prAmount;
+            const profitMargin = Q > 0 ? (finalProfit / Q * 100).toFixed(1) : 0;
+
+            document.getElementById('resPlatform').innerText = `-￥${formatMoney(pFee)}`;
+            document.getElementById('resTax').innerText = `-￥${formatMoney(tax)}`;
+            document.getElementById('resAfterTax').innerText = `￥${formatMoney(afterTax)}`;
+            document.getElementById('resPR').innerText = `-￥${formatMoney(prAmount)}`;
+            document.getElementById('finalNet').innerText = formatMoney(finalProfit);
+            document.getElementById('marginText').innerText = `实收利润率: ${profitMargin}%`;
+
+            // 颜色逻辑更新：使用更现代的色值和阴影
+            if (finalProfit < 0) {
+                finalCard.className = 'relative overflow-hidden bg-red-600 rounded-[32px] p-8 text-white shadow-xl shadow-red-500/30 transition-all duration-500 hover:scale-[1.01]';
+            } else if (profitMargin < 30) {
+                finalCard.className = 'relative overflow-hidden bg-orange-500 rounded-[32px] p-8 text-white shadow-xl shadow-orange-500/30 transition-all duration-500 hover:scale-[1.01]';
+            } else {
+                finalCard.className = 'relative overflow-hidden bg-blue-600 rounded-[32px] p-8 text-white shadow-xl shadow-blue-500/30 transition-all duration-500 hover:scale-[1.01]';
+            }
+        }
+
+        [qInput, prSlider].forEach(el => el.addEventListener('input', update));
+        update();
+    </script>
+</body>
+</html>
