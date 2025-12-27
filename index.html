@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博主财务助手 Pro - 精确计算版</title>
+    <title>博主财务助手 Pro - 精确计算 v5.1</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,6 +31,7 @@
     </script>
 
     <style>
+        /* Figma 风格滑动条自定义 */
         input[type=range] { height: 6px; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -50,15 +51,15 @@
 
 <body class="bg-[#F8FAFC] p-4 md:p-8 min-h-screen flex items-center justify-center font-sans antialiased text-slate-900">
     
-    <div class="max-w-[460px] w-full bg-white rounded-[36px] shadow-figma p-8 md:p-10 border border-slate-50/50">
+    <div class="max-w-[460px] w-full bg-white rounded-[36px] shadow-figma p-8 md:p-10 border border-slate-50/50 transition-all duration-300 hover:shadow-figma-hover">
         
         <div class="mb-10 text-center">
             <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-4 py-1.5 mb-3">
                 <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Accurate Calculation Model</span>
+                <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Accurate Pro v5.1</span>
             </div>
             <h2 class="text-3xl font-black tracking-tight text-slate-900">收入计算器</h2>
-            <p class="text-slate-500 text-sm font-medium mt-2">算法修正版 v5.0 / 阶梯税后返点</p>
+            <p class="text-slate-500 text-sm font-medium mt-2">最高 40% 返点 / 税后扣除逻辑</p>
         </div>
 
         <div class="space-y-8">
@@ -73,15 +74,15 @@
 
                 <div class="pt-2">
                     <div class="flex justify-between items-end mb-4">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">PR 返点比例 (基于税后净额)</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">PR 返点比例 (0% - 40%)</label>
                         <span id="prValue" class="text-orange-600 font-mono font-bold bg-orange-50/80 border border-orange-100 px-3 py-1 rounded-lg text-sm shadow-sm">0%</span>
                     </div>
                     <div class="relative py-2">
-                        <input type="range" id="prSlider" min="0" max="50" value="0" class="w-full bg-slate-200 rounded-full appearance-none cursor-pointer outline-none">
+                        <input type="range" id="prSlider" min="0" max="40" value="0" class="w-full bg-slate-200 rounded-full appearance-none cursor-pointer outline-none">
                         <div class="flex justify-between text-[10px] text-slate-400 mt-3 font-bold uppercase px-1">
                             <span>0%</span>
-                            <span>25%</span>
-                            <span>50%</span>
+                            <span>20%</span>
+                            <span>40%</span>
                         </div>
                     </div>
                 </div>
@@ -98,7 +99,7 @@
                         <span id="resTax" class="font-mono text-slate-700 font-bold">-</span>
                     </div>
                     <div class="flex justify-between items-center py-3 bg-blue-50/30 -mx-6 px-6">
-                        <span class="text-sm text-blue-600 font-bold">税后余额 (返点基数)</span>
+                        <span class="text-sm text-blue-600 font-bold italic underline">税后余额 (返点基数)</span>
                         <span id="resAfterTax" class="font-mono text-blue-700 font-black">￥0.00</span>
                     </div>
                      <div class="flex justify-between items-center py-3">
@@ -110,7 +111,7 @@
 
             <div id="finalCard" class="relative overflow-hidden bg-blue-600 rounded-[32px] p-8 text-white shadow-xl shadow-blue-500/30 transition-all duration-500">
                 <div class="relative z-10 text-center">
-                    <p class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">最终实收净利润 (Final Profit)</p>
+                    <p class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">最终实收净利润 (Net Profit)</p>
                     <div class="flex items-baseline justify-center gap-1.5">
                         <span class="text-2xl font-semibold opacity-90">￥</span>
                         <span id="finalNet" class="text-5xl font-black font-mono tracking-tighter">0.00</span>
@@ -135,29 +136,34 @@
 
         function update() {
             const Q = parseFloat(qInput.value) || 0;
+            // 获取滑块值 (0-40)
             const prRate = (parseInt(prSlider.value) || 0) / 100;
             
-            prValue.innerText = (prRate * 100) + '%';
+            prValue.innerText = (prRate * 100).toFixed(0) + '%';
 
-            // 1. 扣除平台费
+            // 1. 扣除 10% 平台服务费
             const pFee = Q * 0.10;
             const B = Q - pFee;
 
-            // 2. 扣除税费
+            // 2. 扣除税费 (阶梯模型)
             let tax = 0;
             if (B > 8000) {
                 tax = (B - 8000) * 0.08333333 + 2;
             } else if (B > 0) {
                 tax = 2;
             }
-            const afterTaxBase = B - tax; // 这才是真正的返点基数
+            
+            // 3. 计算税后余额（以此作为返点基数）
+            const afterTaxBase = B - tax;
 
-            // 3. 计算 PR 返点 (基于税后净额)
+            // 4. 计算 PR 返点金额 (逻辑修正：基于扣除服务费和税后的净额)
             const prAmount = afterTaxBase * prRate;
+            
+            // 5. 计算最终利润
             const finalProfit = afterTaxBase - prAmount;
             const profitMargin = Q > 0 ? (finalProfit / Q * 100).toFixed(1) : 0;
 
-            // 4. UI 渲染
+            // UI 渲染更新
             document.getElementById('resPlatform').innerText = `-￥${formatMoney(pFee)}`;
             document.getElementById('resTax').innerText = `-￥${formatMoney(tax)}`;
             document.getElementById('resAfterTax').innerText = `￥${formatMoney(afterTaxBase)}`;
@@ -165,7 +171,7 @@
             document.getElementById('finalNet').innerText = formatMoney(finalProfit);
             document.getElementById('marginText').innerText = `实收利润率: ${profitMargin}%`;
 
-            // 5. 状态颜色
+            // 卡片状态颜色逻辑
             const baseClass = 'relative overflow-hidden rounded-[32px] p-8 text-white shadow-xl transition-all duration-500 ';
             if (finalProfit < 0) {
                 finalCard.className = baseClass + 'bg-red-600 shadow-red-500/30';
@@ -176,7 +182,10 @@
             }
         }
 
+        // 监听输入事件
         [qInput, prSlider].forEach(el => el.addEventListener('input', update));
+        
+        // 初始运行一次
         update();
     </script>
 </body>
