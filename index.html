@@ -6,8 +6,8 @@
     <title>博主收入计算器</title>
 
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="icon.svg?v=8.4">
-    <link rel="apple-touch-icon" href="icon.svg?v=8.4">
+    <link rel="icon" type="image/svg+xml" href="icon.svg?v=8.4.3">
+    <link rel="apple-touch-icon" href="icon.svg?v=8.4.3">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -85,7 +85,7 @@
             <div class="text-center">
                 <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1 mb-3">
                     <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">PWA Active v8.4.2</span>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">PWA Active v8.4.3</span>
                 </div>
                 <h2 class="text-2xl font-black tracking-tight text-slate-900">收入计算器</h2>
             </div>
@@ -131,6 +131,10 @@
                             <span class="text-[11px] text-slate-400 font-bold uppercase tracking-widest">分段税费 (3%)</span>
                             <span id="resTax" class="font-mono text-red-500 font-bold text-xs">¥ 0.00</span>
                         </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-[11px] text-green-500 font-bold uppercase tracking-widest">起征点减免税额</span>
+                            <span id="resTaxSaving" class="font-mono text-green-600 font-bold text-xs">¥ 0.00</span>
+                        </div>
                         <div class="flex justify-between items-center py-2.5 bg-blue-50/40 -mx-4 px-4 mt-1.5">
                             <span class="text-[11px] text-blue-700 font-black tracking-wide">税后余额 (基数)</span>
                             <span id="resAfterTax" class="font-mono text-blue-800 font-black text-xs">¥ 0.00</span>
@@ -162,23 +166,20 @@
     </div>
 
     <script>
-        // 改进的 PWA 注册逻辑：强制检测更新
+        // PWA 自动热更新逻辑
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then(reg => {
-                    console.log('PWA Registered');
                     reg.onupdatefound = () => {
                         const installingWorker = reg.installing;
                         installingWorker.onstatechange = () => {
                             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                // 检测到新版本，直接静默刷新
                                 window.location.reload();
                             }
                         };
                     };
                 });
             });
-
             let refreshing = false;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (!refreshing) {
@@ -191,47 +192,69 @@
         const qInput = document.getElementById('qInput'), prSlider = document.getElementById('prSlider');
         const prValue = document.getElementById('prValue'), toggle = document.getElementById('thresholdToggle');
         const finalCard = document.getElementById('finalCard'), finalNetInput = document.getElementById('finalNetInput');
-        const resPrAmount = document.getElementById('resPrAmount');
+        const resPrAmount = document.getElementById('resPrAmount'), resTaxSaving = document.getElementById('resTaxSaving');
 
         let lastActiveMode = 'quote'; 
 
         function formatMoney(num) { return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
+        function calculateTax(taxableIncome, useThreshold) {
+            const threshold = useThreshold ? 5000 : 0;
+            let tax = taxableIncome > threshold ? (taxableIncome - threshold) * 0.03 - 2.22 : 0;
+            return tax < 0 ? 0 : tax;
+        }
+
         function updateForward() {
             const Q = parseFloat(qInput.value) || 0;
             const prRate = (parseInt(prSlider.value) || 0) / 100;
             prValue.innerText = (prRate * 100).toFixed(0) + '%';
+            
             const pFee = Q * 0.10, B = Q - pFee, taxableIncome = B * 0.8;
-            const threshold = toggle.checked ? 5000 : 0;
-            let tax = taxableIncome > threshold ? (taxableIncome - threshold) * 0.03 - 2.22 : 0;
-            if (tax < 0) tax = 0;
-            const afterTaxBase = B - tax;
+            
+            // 计算两种情况下的税费差额
+            const taxWithThreshold = calculateTax(taxableIncome, true);
+            const taxWithoutThreshold = calculateTax(taxableIncome, false);
+            const saving = toggle.checked ? (taxWithoutThreshold - taxWithThreshold) : 0;
+            
+            const currentTax = toggle.checked ? taxWithThreshold : taxWithoutThreshold;
+            const afterTaxBase = B - currentTax;
             const prAmt = afterTaxBase * prRate;
             const finalProfit = afterTaxBase - prAmt;
+            
             finalNetInput.value = finalProfit > 0 ? finalProfit.toFixed(2) : "";
             resPrAmount.innerText = `¥ ${formatMoney(prAmt)}`;
-            renderUI(Q, pFee, tax, afterTaxBase, finalProfit);
+            resTaxSaving.innerText = `¥ ${formatMoney(saving)}`;
+            renderUI(Q, pFee, currentTax, afterTaxBase, finalProfit);
         }
 
         function updateReverse() {
             const P = parseFloat(finalNetInput.value) || 0;
             const prRate = (parseInt(prSlider.value) || 0) / 100;
             prValue.innerText = (prRate * 100).toFixed(0) + '%';
-            const threshold = toggle.checked ? 5000 : 0;
+            
             const targetAfterTaxBase = P / (1 - prRate);
+            const useThreshold = toggle.checked;
+            const threshold = useThreshold ? 5000 : 0;
+            
             let B;
             if (targetAfterTaxBase * 0.8 <= threshold) {
                 B = targetAfterTaxBase;
             } else {
                 B = (targetAfterTaxBase - 0.03 * threshold - 2.22) / 0.976;
             }
-            const Q = B / 0.9;
+            
+            const Q = B / 0.9, pFee = Q * 0.1, actualB = Q - pFee;
+            const taxableIncome = actualB * 0.8;
+            
+            const taxWithThreshold = calculateTax(taxableIncome, true);
+            const taxWithoutThreshold = calculateTax(taxableIncome, false);
+            const saving = useThreshold ? (taxWithoutThreshold - taxWithThreshold) : 0;
+            const currentTax = useThreshold ? taxWithThreshold : taxWithoutThreshold;
+
             qInput.value = Q > 0 ? Q.toFixed(2) : "";
-            const pFee = Q * 0.1, actualB = Q - pFee;
-            const tax = actualB * 0.8 > threshold ? (actualB * 0.8 - threshold) * 0.03 - 2.22 : 0;
-            const prAmt = targetAfterTaxBase * prRate;
-            resPrAmount.innerText = `¥ ${formatMoney(prAmt)}`;
-            renderUI(Q, pFee, tax, targetAfterTaxBase, P);
+            resPrAmount.innerText = `¥ ${formatMoney(targetAfterTaxBase * prRate)}`;
+            resTaxSaving.innerText = `¥ ${formatMoney(saving)}`;
+            renderUI(Q, pFee, currentTax, targetAfterTaxBase, P);
         }
 
         function renderUI(Q, pFee, tax, afterTaxBase, finalProfit) {
