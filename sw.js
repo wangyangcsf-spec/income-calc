@@ -1,5 +1,5 @@
-// 每次修改代码后，必须修改下面的版本号字符串（例如 v8.4.2 -> v8.4.3）
-const CACHE_NAME = 'v8.4.2';
+// 每次修改 index.html 后，必须修改此版本号
+const CACHE_NAME = 'v8.4.3';
 
 const ASSETS_TO_CACHE = [
     './',
@@ -8,7 +8,6 @@ const ASSETS_TO_CACHE = [
     './icon.svg'
 ];
 
-// 安装：强制跳过等待
 self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
@@ -18,7 +17,6 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// 激活：清理旧缓存并接管控制权
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -33,8 +31,7 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// 策略：网络优先 (Network First)
-// 联网时请求最新内容，断网时才读取缓存
+// 网络优先策略
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         fetch(event.request).catch(() => {
